@@ -8,12 +8,11 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    double theta = std::atof(argv[1]);
-    double phi   = std::atof(argv[2]);
-    double alpha = std::atof(argv[3]);
+    const double theta = std::atof(argv[1]);
+    const double phi   = std::atof(argv[2]);
+    const double alpha = std::atof(argv[3]);
 
     Result r = solve(theta, phi, alpha);
-
-    std::printf("%.10f %.10f %.10f\n", r.l1, r.l2, r.cost);
+    std::printf("%.12f %.12f %.12f\n", r.l1, r.l2, r.cost);
     return 0;
 }

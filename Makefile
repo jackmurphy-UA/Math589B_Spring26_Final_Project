@@ -1,12 +1,30 @@
-TARGET = solver
-NVCC   = nvcc
-NVCCFLAGS = -O2
+#include <Eigen/Dense>
+#include <Eigen/Eigenvalues>
+#include <iostream>
 
+int main() {
+    Eigen::Matrix4d A;
 
-SRC = src/main.cu src/solver.cu
+    A << 0.0,  1.0,  0.0,  0.0,
+         1.0, -0.1,  0.0, -1.0,
+        -1.0,  0.0,  0.0, -1.0,
+         0.0, -1.0, -1.0,  0.1;
 
-all:
-	$(NVCC) $(NVCCFLAGS) $(SRC) -o $(TARGET)
+    Eigen::EigenSolver<Eigen::Matrix4d> es(A);
 
-clean:
-	rm -f $(TARGET)
+    const auto evals = es.eigenvalues();
+
+    std::cout << "Eigenvalues:\n";
+    for (int i = 0; i < evals.size(); ++i) {
+        std::cout << evals[i] << "\n";
+    }
+
+    std::cout << "\nStable eigenvalues (Re < 0):\n";
+    for (int i = 0; i < evals.size(); ++i) {
+        if (evals[i].real() < 0.0) {
+            std::cout << evals[i] << "\n";
+        }
+    }
+
+    return 0;
+}

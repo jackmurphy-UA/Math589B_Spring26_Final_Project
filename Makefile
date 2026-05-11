@@ -1,30 +1,16 @@
-#include <Eigen/Dense>
-#include <Eigen/Eigenvalues>
-#include <iostream>
+SHELL = /bin/bash
 
-int main() {
-    Eigen::Matrix4d A;
+TARGET = solver
+SRC = src/main.cu src/solver.cu
 
-    A << 0.0,  1.0,  0.0,  0.0,
-         1.0, -0.1,  0.0, -1.0,
-        -1.0,  0.0,  0.0, -1.0,
-         0.0, -1.0, -1.0,  0.1;
+all: $(TARGET)
 
-    Eigen::EigenSolver<Eigen::Matrix4d> es(A);
+$(TARGET): $(SRC) src/solver.hpp
+	if command -v nvcc >/dev/null 2>&1; then \
+		nvcc -std=c++17 -O2 $(SRC) -o $(TARGET); \
+	else \
+		g++ -std=c++17 -O2 -x c++ src/main.cu -x c++ src/solver.cu -o $(TARGET); \
+	fi
 
-    const auto evals = es.eigenvalues();
-
-    std::cout << "Eigenvalues:\n";
-    for (int i = 0; i < evals.size(); ++i) {
-        std::cout << evals[i] << "\n";
-    }
-
-    std::cout << "\nStable eigenvalues (Re < 0):\n";
-    for (int i = 0; i < evals.size(); ++i) {
-        if (evals[i].real() < 0.0) {
-            std::cout << evals[i] << "\n";
-        }
-    }
-
-    return 0;
-}
+clean:
+	rm -f $(TARGET)
